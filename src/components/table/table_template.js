@@ -2,23 +2,29 @@ const CODES = {
    A: 65,
    Z: 90
 };
-function createCell() {
+function createCell(letter) {
    return `
-   <div class="cell" contenteditable></div>
+   <div class="cell" contenteditable data-leter=${letter}></div>
    `;
 }
 function createCol(content) {
    return `
-   <div class="column">
+   <div class="column" data-col=${content}>
       ${content}
+      <div class="col-resize" data-resize="col"></div>
    </div>
    `;
 }
 
 function createRow(info, content) {
+   const resize = info ?
+    `<div class="row-resize" data-resize="row"></div>` : '';
    return `
-   <div class="row">
-      <div class="row-info">${info}</div>
+   <div class="row" data-row>
+      <div class="row-info">
+         ${info}
+         ${resize}
+      </div>
       <div class="row-data">${content}</div>
    </div>
    `;
@@ -26,13 +32,15 @@ function createRow(info, content) {
 
 export function createTable(rowsCount = 15) {
    const colsCount = CODES.Z - CODES.A+1;
+   const colsLetters = new Array(colsCount).fill('')
+      .map((el, index) => String.fromCharCode(CODES.A + index));
    const rows = [];
 
-   const cols = new Array(colsCount).fill('')
-      .map((el, index) => createCol(String.fromCharCode(CODES.A + index)))
+   const cols = colsLetters
+      .map(createCol)
       .join('');
 
-   const cells = new Array(colsCount).fill('')
+   const cells = colsLetters
    .map(createCell)
    .join('');
 
