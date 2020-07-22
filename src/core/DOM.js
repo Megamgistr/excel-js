@@ -28,6 +28,20 @@ class DOM {
       return this;
    }
 
+   parent(selector) {
+      return $(this.$el.closest(selector));
+   }
+
+   setStyle(styles = {}) {
+      Object.entries(styles)
+      .forEach(([key, value]) => this.$el.style[key]=value);
+      return this;
+   }
+
+   getStyle(key) {
+      return this.$el.style[key];
+   }
+
    on(eventType, callback) {
       this.$el.addEventListener(eventType, callback);
       return this;
@@ -37,10 +51,26 @@ class DOM {
       this.$el.removeEventListener(eventType, callback);
       return this;
    }
+
+   getCoords() {
+      return this.$el.getBoundingClientRect();
+   }
+
+   dataset() {
+      return this.$el.dataset;
+   }
 }
 
 export function $(selector) {
    return new DOM(selector);
+}
+
+export function $$(selector, $root) {
+   if ($root) {
+      return [...$root.getRootElement().querySelectorAll(selector)]
+      .map(el => new DOM(el));
+   }
+   return [...document.querySelectorAll(selector)].map(el => new DOM(el));
 }
 
 
