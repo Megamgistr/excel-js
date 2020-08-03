@@ -1,7 +1,17 @@
 class DOM {
    constructor(selector) {
       this.$el = typeof selector === 'string' ?
-      document.querySelector(selector) : selector;
+         document.querySelector(selector) : selector;
+   }
+
+   setText(text) {
+      this.$el.textContent = text;
+   }
+
+   getText() {
+     return this.$el.tagName != "INPUT" ?
+         this.$el.textContent.trim() :
+         this.$el.value;
    }
 
    getRootElement() {
@@ -34,7 +44,7 @@ class DOM {
 
    setStyle(styles = {}) {
       Object.entries(styles)
-      .forEach(([key, value]) => this.$el.style[key]=value);
+         .forEach(([key, value]) => this.$el.style[key] = value);
       return this;
    }
 
@@ -59,6 +69,27 @@ class DOM {
    dataset() {
       return this.$el.dataset;
    }
+
+   contains(className) {
+      return this.$el.classList.contains(className);
+   }
+
+   removeClass(className) {
+      this.$el.classList.remove(className);
+   }
+
+   setClass(className) {
+      this.$el.classList.add(className);
+   }
+
+   find(selector) {
+      return $(this.$el.querySelector(selector));
+   }
+
+   focus() {
+      this.$el.focus();
+      return this;
+   }
 }
 
 export function $(selector) {
@@ -68,7 +99,7 @@ export function $(selector) {
 export function $$(selector, $root) {
    if ($root) {
       return [...$root.getRootElement().querySelectorAll(selector)]
-      .map(el => new DOM(el));
+         .map(el => new DOM(el));
    }
    return [...document.querySelectorAll(selector)].map(el => new DOM(el));
 }
