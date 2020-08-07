@@ -1,51 +1,51 @@
-import { ExcelComponent } from "@core/ExcelComponent";
+import {
+    createToolbar
+} from "./toolbar_template";
+import {
+    $
+} from "@core/DOM";
+import {
+    ExcelStateComponent
+} from "@core/ExcelStateComponent";
+import {
+    defaultStyles
+} from "../../constans";
 
-export class Toolbar extends ExcelComponent {
+export class Toolbar extends ExcelStateComponent {
     static className = "excel__toolbar";
 
     constructor($root, options) {
         super($root, {
             name: 'Toolbar',
             listeners: ['click'],
+            subscribes: ['currentStyles'],
             ...options
         });
     }
+    storeChanges(value) {
+        this.setState(value.currentStyles);
+    }
+
+    init() {
+        super.init();
+    }
+
+    prepare() {
+        this.initState(defaultStyles);
+    }
+
+    get template() {
+        return createToolbar(this.state);
+    }
 
     onClick(e) {
-        console.log(e);
+        const target = $(e.target);
+        if (target.dataset().type === "button") {
+            this.$emmit("toolbar:applyStile",
+                JSON.parse(target.dataset().value));
+        }
     }
     toHTML() {
-        return `<div>
-        <div class="button">
-            <i class="material-icons">
-                format_bold
-            </i>
-        </div>
-        <div class="button">
-            <i class="material-icons">
-                format_italic
-            </i>
-        </div>
-        <div class="button">
-            <i class="material-icons">
-                format_underlined
-            </i>
-        </div>
-        <div class="button">
-            <i class="material-icons">
-                format_align_center
-            </i>
-        </div>
-        <div class="button">
-            <i class="material-icons">
-                format_align_left
-            </i>
-        </div>
-        <div class="button">
-            <i class="material-icons">
-                format_align_right
-            </i>
-        </div>
-    </div>`;
+        return this.template;
     }
 }

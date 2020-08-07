@@ -52,6 +52,21 @@ class DOM {
       return this.$el.style[key];
    }
 
+   getStyles(keys = []) {
+      return keys.reduce((acc, key) => {
+         acc[key] = this.$el.style[key];
+         return acc;
+      }, {});
+   }
+
+   attr(name, value) {
+      if (value) {
+         this.$el.setAttribute(name, value);
+         return this;
+      }
+      return this.$el.getAttribute(name);
+   }
+
    on(eventType, callback) {
       this.$el.addEventListener(eventType, callback);
       return this;
