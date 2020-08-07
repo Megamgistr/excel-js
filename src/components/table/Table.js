@@ -18,6 +18,18 @@ import {
 import {
     $
 } from "@core/DOM";
+import {
+    tableResize
+} from "@/store/actions";
+import {
+    changeText,
+    changeCurrentStyles,
+    applayStyle
+} from "../../store/actions";
+import {
+    defaultStyles
+} from "../../constans";
+import { parse } from "../../core/parse";
 
 export class Table extends ExcelComponent {
     static className = "excel__table";
@@ -29,19 +41,31 @@ export class Table extends ExcelComponent {
         });
     }
     toHTML() {
-        return createTable();
+        return createTable(15, this.store.getState());
     }
 
     selectCell($el) {
         this.select.select($el);
-        console.log($el);
-        const text = $el.getText();
-        console.log(text);
-        this.$emmit('table:input', text);
+        const text = $el.dataset().value || $el.getText();
+        this.updateText(text);
+        this.$dispatch(changeCurrentStyles($el
+            .getStyles(Object.keys(defaultStyles))));
     }
 
     prepare() {
         this.select = new TableSelection();
+    }
+
+    updateText(value) {
+        this.select.getSelectedElements().forEach($el => {
+            this.$dispatch(changeText({
+                data: {
+                    id: this.select.getIndex($el).join(":"),
+                    value: value,
+                    currentText: $el.dataset().value || value
+                }
+            }));
+        });
     }
 
     init() {
@@ -50,16 +74,28 @@ export class Table extends ExcelComponent {
         $startElem.focus();
         this.selectCell($startElem);
         this.$on('formula:input', (data) => {
-            this.select.getSelectedElements()[0].setText(data);
+            this.select.getSelectedElements().forEach($el => {
+                $el.setText(parse(data));
+                $el.attr('data-value', data);
+            });
+            this.updateText(data);
         });
         this.$on('formula:done', () => {
             this.select.getSelectedElements()[0].focus();
+        });
+        this.$on('toolbar:applyStile', (value) => {
+            this.select.getSelectedElements()
+                .forEach($element => $element.setStyle(value));
+            this.$dispatch(applayStyle({
+                value,
+                ids: this.select.selectedIds
+            }));
         });
     }
 
     onMousedown(event) {
         if (shouldResize(event)) {
-            resizeHandler(this.$root);
+            this.resizeTable();
         }
     }
 
@@ -71,6 +107,15 @@ export class Table extends ExcelComponent {
             this.selectCell($(event.target));
         } else {
             this.select.selectGroup($(event.target));
+        }
+    }
+
+    async resizeTable() {
+        try {
+            const data = await resizeHandler(this.$root);
+            this.$dispatch(tableResize(data));
+        } catch (e) {
+            console.warn(e.message);
         }
     }
 
@@ -97,7 +142,9 @@ export class Table extends ExcelComponent {
     }
 
     onInput(event) {
-        const text = event.target.textContent.trim();
-        this.$emmit('table:input', text);
+        const text = $(event.target).getText();
+        $(event.target).setText(text);
+        $(event.target).attr('data-value', text);
+        this.updateText(text);
     }
 }

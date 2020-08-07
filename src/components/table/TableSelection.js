@@ -15,6 +15,10 @@ export class TableSelection {
       return this.group;
    }
 
+   get selectedIds() {
+      return this.group.map($el => this.getIndex($el).join(":"));
+   }
+
    select($el) {
       this.clear();
       [this.$mainRIndex, this.$mainCIndex] = this.getIndex($el);
