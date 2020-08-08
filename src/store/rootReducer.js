@@ -3,7 +3,8 @@ import {
    CHANGE_TEXT,
    CHANGE_STYLES,
    APPLAY_STYLE,
-   CHANGE_TITLE
+   CHANGE_TITLE,
+   DATE_UPDATE
 } from "./types";
 
 export function rootReducer(state, action) {
@@ -37,6 +38,10 @@ export function rootReducer(state, action) {
       case CHANGE_TITLE:
          return {
             ...state, title: action.data
+         };
+      case DATE_UPDATE:
+         return {
+            ...state, date: new Date().toJSON()
          };
 
       default:

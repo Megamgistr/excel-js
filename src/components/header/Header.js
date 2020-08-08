@@ -4,13 +4,17 @@ import {
 import {
     changeTitle
 } from "../../store/actions";
+import {
+    $
+} from "@core/DOM";
+import { ActiveRoute } from "../../core/routes/activeRoute";
 
 export class Header extends ExcelComponent {
     constructor($root, options) {
         super($root, {
             name: "Header",
             ...options,
-            listeners: ['input'],
+            listeners: ['input', 'click'],
             subscribtions: [],
         });
     }
@@ -23,15 +27,15 @@ export class Header extends ExcelComponent {
     toHTML() {
         return `
         <input class="input" type="text" 
-        value='${this.store.getState().title.value || "New table"}'></input>
+        value='${this.store.getState().title.value}'></input>
         <div>
-            <div class="button">
-                <i class="material-icons">
+            <div class="button" data-delete>
+                <i class="material-icons" data-delete>
                     delete
                 </i>
             </div>
-            <div class="button">
-                <i class="material-icons">
+            <div class="button" data-exit>
+                <i class="material-icons" data-exit>
                     exit_to_app
                 </i>
             </div>
@@ -44,5 +48,21 @@ export class Header extends ExcelComponent {
         this.$dispatch(changeTitle({
             value
         }));
+    }
+
+    onClick(e) {
+    const target = $(e.target);
+    const param = ActiveRoute.param;
+    const data = target.dataset();
+    if (data.delete != undefined) {
+        const conf = confirm("Are you shure ?");
+        if (conf) {
+            localStorage.removeItem(`excel:${param}`);
+            ActiveRoute.path = "";
+        }
+    }
+    if (data.exit != undefined) {
+        ActiveRoute.path = "";
+    }
     }
 }
