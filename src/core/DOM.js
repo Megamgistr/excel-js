@@ -26,7 +26,7 @@ class DOM {
    }
 
    html(html) {
-      if (html) {
+      if (html != undefined) {
          this.$el.innerHTML = html;
          return this;
       }
@@ -34,7 +34,7 @@ class DOM {
    }
 
    clear() {
-      this.html(' ');
+      this.html('');
       return this;
    }
 

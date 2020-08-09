@@ -1,6 +1,6 @@
 import {$} from '@core/DOM';
 import { Emmiter } from '@core/Emmiter';
-import { StoreSubscriber } from '../../core/StoreSubscriber';
+import { StoreSubscriber } from '@core/store/StoreSubscriber';
 import { dateUpdate } from '../../store/actions';
 
 export class Excel {
