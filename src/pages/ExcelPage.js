@@ -23,18 +23,16 @@ import {
    rootReducer
 } from "../store/rootReducer";
 import {
-   storage
-} from "@core/utils/storage";
-import {
    normalizeInitState
 } from "../store/initState";
 import {
-   debounce
-} from "@core/utils/debounce";
-import { ActiveRoute } from "../core/routes/activeRoute";
+   ActiveRoute
+} from "../core/routes/activeRoute";
+import { StateProcessor } from "./StateProcessor";
+import { LocalStorageClient } from "./LocalStorageClient";
 
 function storageName(param) {
-   return 'excel:' + param;
+   return 'excel:' + (param || createParam());
 }
 
 function createParam() {
@@ -42,17 +40,19 @@ function createParam() {
    ActiveRoute.param = newParam;
    return newParam;
 }
-export class ExcelPage extends Page {
-   getRoot() {
-      const params = this.params || createParam();
-      const name = storageName(params);
-      const state = storage(name);
-      const store = new Store(rootReducer, normalizeInitState(state));
-      const stateListener = debounce(state => {
-         storage(name, state);
-      }, 300);
 
-      store.subscribe(stateListener);
+export class ExcelPage extends Page {
+   constructor(param) {
+      super(param);
+      this.processor = new StateProcessor(
+         new LocalStorageClient(storageName(this.params))
+         );
+   }
+   async getRoot() {
+      const state = await this.processor.get();
+      const store = new Store(rootReducer, normalizeInitState(state));
+      store.subscribe(this.processor.listen);
+
 
       this.excel = new Excel({
          components: [Header, Toolbar, Formula, Table],
