@@ -4,12 +4,14 @@ import {
 import {
    ActiveRoute
 } from "./activeRoute";
+import { loader } from "../../components/loader/loader";
 
 export class Router {
    constructor(selector, rotes) {
       this.$placeholder = $(selector);
       this.rotes = rotes;
       this.page = null;
+      this.loader = loader();
       this.changePageHandler = this.changePageHandler.bind(this);
       this.init();
    }
@@ -20,15 +22,16 @@ export class Router {
       this.changePageHandler();
    }
 
-   changePageHandler() {
-      this.$placeholder.clear();
+   async changePageHandler() {
+      this.$placeholder.clear().append(this.loader);
       if (this.page) {
          this.page.destroy();
       }
       const Page = ActiveRoute.path.includes('excel') ?
          this.rotes.excel : this.rotes.dashboard;
       this.page = new Page(ActiveRoute.param);
-      this.$placeholder.append(this.page.getRoot());
+      const root = await this.page.getRoot();
+      this.$placeholder.clear().append(root);
       this.page.afterRender();
    }
 
