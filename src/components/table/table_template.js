@@ -3,8 +3,7 @@ import {
    COLS_COUNT,
    ROWS_COUNT
 } from "./tableConfig";
-import { toInlineStyles } from "@core/utils/stringUtils";
-import { parse } from "../../core/parse";
+import { toInlineStyles, parse } from "@core/utils/stringUtils";
 
 const DEFAULT_WIDTH = 120;
 const DEFAULT_HEIGHT = 24;

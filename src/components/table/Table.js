@@ -29,7 +29,9 @@ import {
 import {
     defaultStyles
 } from "../../constans";
-import { parse } from "../../core/parse";
+import {
+    parse
+} from "@core/utils/stringUtils";
 
 export class Table extends ExcelComponent {
     static className = "excel__table";

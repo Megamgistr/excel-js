@@ -1,6 +1,6 @@
 import {
    Page
-} from "@core/Page";
+} from "./Page";
 import {
    Excel
 } from "@/components/excel/Excel";
@@ -18,7 +18,7 @@ import {
 } from "@/components/table/Table";
 import {
    Store
-} from "@core/Store";
+} from "@core/store/Store";
 import {
    rootReducer
 } from "../store/rootReducer";

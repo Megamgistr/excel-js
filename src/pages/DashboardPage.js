@@ -1,4 +1,4 @@
-import { Page } from "../core/Page";
+import { Page } from "./Page";
 import { Dashboard } from "../components/dashboard/Dashboard";
 
 export class DashboardPage extends Page {
