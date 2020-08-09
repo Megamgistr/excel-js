@@ -26,7 +26,12 @@ describe("Router: ", () => {
    });
 
    test('should render dashboard page', () => {
-      router.changePageHandler();
-      expect($root.innerHTML).toBe('<div>dashboard</div>');
+      return new Promise(resolve => {
+         router.changePageHandler();
+         setTimeout(() => {
+            expect($root.innerHTML).toBe('<div>dashboard</div>');
+            resolve();
+         }, 2000);
+    });
    });
 });
